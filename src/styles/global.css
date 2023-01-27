@@ -23,35 +23,43 @@ main {
   align-items: center;
 }
 
-footer {
-  width: 100%;
-  height: 100px;
-  border-top: 1px solid #eaeaea;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-footer img {
-  margin-left: 0.5rem;
-}
-
-footer a {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
 a {
   color: inherit;
   text-decoration: none;
 }
 
-code {
-  background: #fafafa;
-  border-radius: 5px;
-  padding: 0.75rem;
-  font-size: 1.1rem;
-  font-family: Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono,
-    Bitstream Vera Sans Mono, Courier New, monospace;
+@layer components {
+  ._selected {
+    background-color: cadetblue;
+    color: white;
+  }
+  ._highlighted {
+    background-color: snow;
+  }
+  ._slider {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 1rem;
+    border-radius: 0.5rem;
+    background: white;
+    outline: none;
+    -webkit-transition: .2s;
+    transition: opacity .2s;
+  }
+  ._slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 1rem;
+    background: cadetblue;
+    cursor: pointer;
+  }
+  ._slider::-moz-range-thumb {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 1rem;
+    background: cadetblue;
+    cursor: pointer;
+  }
 }

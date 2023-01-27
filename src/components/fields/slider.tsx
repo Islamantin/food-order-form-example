@@ -1,20 +1,23 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import utils from "../../utils";
+import { MultistepFormInputFieldComponentProps } from "../multistepFormBase";
 
-export interface SliderProps {
-  getValue: () => any;
-  valueChanged: (val: any) => void;
+export interface SliderProps extends MultistepFormInputFieldComponentProps {
   min: number;
   max: number;
   labelText?: string;
 }
 
 export default function Slider(props: SliderProps) {
-  const { valueChanged, getValue, min, max, labelText } = props;
+  const { valueChanged, getValue, validityChanged, min, max, labelText } =
+    props;
   const [value, setValue] = useState(utils.clamp(min, max, getValue()));
-  const updateValue = (val: string) => {
-    setValue(val as any);
-    valueChanged(val);
+  const [errorMessage, setErrorMessage] = useState(null as string | null);
+  useEffect(() => {
+    if (!errorMessage) valueChanged(value);
+  }, [value]);
+  const isValueValid = (val: any) => {
+    return val - 0 == val && val >= min && val <= max;
   };
   return (
     <div className="mb-4 border-2 p-4 rounded-lg">
@@ -23,7 +26,17 @@ export default function Slider(props: SliderProps) {
         <label>{value}</label>
       </div>
       <input
-        onChange={(ev) => updateValue(ev.target.value)}
+        onChange={(ev) => {
+          const val = ev.target.value;
+          const valid = isValueValid(val);
+          setValue(val as any);
+          if (valid) {
+            setErrorMessage(null);
+          } else {
+            setErrorMessage("Value is incorrect");
+          }
+          if (validityChanged) validityChanged(valid);
+        }}
         step="1"
         type="range"
         min={min}
@@ -31,6 +44,9 @@ export default function Slider(props: SliderProps) {
         value={value}
         className="_slider border-b-2"
       />
+      {errorMessage && (
+        <p className="mt-4 text-red-700 text-right">{errorMessage}</p>
+      )}
     </div>
   );
 }

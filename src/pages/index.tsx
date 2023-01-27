@@ -16,10 +16,6 @@ interface MealOrder {
   }[];
 }
 
-interface ValidationError {
-  message: string;
-}
-
 const steps: Step[] = [
   { title: "Step 1", fields: ["category", "numberOfPeople"] },
   { title: "Step 2", fields: ["restaurant"] },
@@ -41,7 +37,7 @@ export default function Home() {
     (data as any)[fieldName] = value;
     setData(data);
   };
-  const getValue = (fieldName: string) => {
+  const getCurrentValue = (fieldName: string) => {
     return (data as any)[fieldName];
   };
   return (
@@ -52,15 +48,23 @@ export default function Home() {
       </Head>
 
       <main className="mx-60">
-        <MultistepFormBase
-          steps={steps}
-          getInputComponent={(fieldName) =>
-            getInputComponent(fieldName, updateData, getValue)
-          }
-          validateField={function (value: any, fieldName: string): boolean {
-            throw new Error("Function not implemented.");
-          }}
-        />
+        <div className="shadow-lg w-full p-10 rounded-lg bg-slate-100 max-w-xl">
+          <h1 className=" text-3xl mb-8 text-center">Meal Pre-Order</h1>
+          <MultistepFormBase
+            steps={steps}
+            getInputFieldComponent={(fieldName, validationCallback) =>
+              getInputFieldComponent(
+                fieldName,
+                validationCallback,
+                updateData,
+                getCurrentValue
+              )
+            }
+            onSubmit={() => {
+              console.log(data);
+            }}
+          />
+        </div>
       </main>
     </>
   );
@@ -75,19 +79,21 @@ function getData() {
   return result;
 }
 
-function getInputComponent(
+function getInputFieldComponent(
   fieldName: string,
+  validationCallback: (fieldName: string, isValid: boolean) => void,
   fieldUpdateCallback: (fieldName: string, value: any) => void,
-  getValue: (fieldName: string) => any
+  getCurrentValue: (fieldName: string) => any
 ) {
   switch (fieldName) {
     case "category":
       return (
         <RadioSelector
           key={"field-" + fieldName}
-          options={mealCategories}
           valueChanged={(val) => fieldUpdateCallback(fieldName, val)}
-          getValue={() => getValue(fieldName)}
+          getValue={() => getCurrentValue(fieldName)}
+          validityChanged={(isValid) => validationCallback(fieldName, isValid)}
+          options={mealCategories}
           labelText="Meal category"
           className="mb-4"
         ></RadioSelector>
@@ -97,7 +103,8 @@ function getInputComponent(
         <Slider
           key={"field-" + fieldName}
           valueChanged={(val) => fieldUpdateCallback(fieldName, val)}
-          getValue={() => getValue(fieldName)}
+          getValue={() => getCurrentValue(fieldName)}
+          validityChanged={(isValid) => validationCallback(fieldName, isValid)}
           min={1}
           max={10}
           labelText="Number of people"
@@ -109,18 +116,4 @@ function getInputComponent(
       return <div key={"field-" + fieldName} />;
   }
   return <></>;
-}
-
-function validateField(fieldName: string, value: any): ValidationError | null {
-  switch (fieldName) {
-    case "category":
-      break;
-    case "numberOfPeople":
-      break;
-    case "restaurant":
-      break;
-    case "dishes":
-      break;
-  }
-  return null;
 }

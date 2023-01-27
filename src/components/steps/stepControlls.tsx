@@ -5,11 +5,19 @@ interface StepControllsProps {
   prevStep: () => void;
   currentStepInd: number;
   maxStepInd: number;
+  isNextDisabled: boolean;
   className?: string;
 }
 
 export default function StepControlls(props: StepControllsProps) {
-  const { nextStep, prevStep, currentStepInd, maxStepInd, className } = props;
+  const {
+    nextStep,
+    prevStep,
+    currentStepInd,
+    maxStepInd,
+    isNextDisabled,
+    className,
+  } = props;
   const styles = className ? className : "";
   return (
     <div className={"flex justify-between bottom " + styles}>
@@ -18,6 +26,7 @@ export default function StepControlls(props: StepControllsProps) {
           label={"Back"}
           clickCallBack={prevStep}
           className="hover:_highlighted"
+          disabled={false}
         />
       ) : (
         <div />
@@ -26,7 +35,8 @@ export default function StepControlls(props: StepControllsProps) {
         <Button
           label={"Next"}
           clickCallBack={nextStep}
-          className="hover:_highlighted"
+          className={!isNextDisabled ? "hover:_highlighted" : " bg-gray-400"}
+          disabled={isNextDisabled}
         />
       ) : (
         <div />

@@ -13,12 +13,13 @@ interface MultistepFormBaseProps {
   onSubmit: () => void;
 }
 
+// representation of form step
 export interface Step {
   title: string;
   fields: string[];
-  extraComponents?: string[];
 }
 
+// general props interface for every input field component
 export interface InputFieldComponentProps {
   onValueUpdated: (val: any) => void;
   getValue: () => any;
@@ -31,6 +32,7 @@ export interface ValidationError {
   condition: (value: any, extraParams?: any) => boolean;
 }
 
+// main form component
 export default function MultistepFormBase(props: MultistepFormBaseProps) {
   const { steps, getFieldComponent, onStepChanged, onSubmit } = props;
   const [currentStepInd, setCurrentStepInd] = useState(0);
@@ -42,12 +44,14 @@ export default function MultistepFormBase(props: MultistepFormBaseProps) {
   };
   const prevStep = () => {
     if (currentStepInd - 1 < 0) return;
+    // clearing validation errors for inputs that are in the next step when moving back
     setInvalidFields(
       invalidFields.filter((x) => !steps[currentStepInd].fields.includes(x))
     );
     setCurrentStepInd(currentStepInd - 1);
     onStepChanged(currentStepInd, currentStepInd - 1);
   };
+  // handling validation status changes for every specific input field component
   const validityChanged = (fieldName: string, isValid: boolean) => {
     if (!isValid) {
       setInvalidFields(utils.uniquePush(invalidFields, fieldName));
@@ -67,6 +71,7 @@ export default function MultistepFormBase(props: MultistepFormBaseProps) {
         currentStepInd={currentStepInd}
         className="mb-8"
       />
+      {/* outer field components injection */}
       {steps[currentStepInd].fields.map((val) =>
         getFieldComponent(val, validityChanged)
       )}
@@ -75,12 +80,14 @@ export default function MultistepFormBase(props: MultistepFormBaseProps) {
         prevStep={prevStep}
         currentStepInd={currentStepInd}
         maxStepInd={steps.length - 1}
+        // the "next" button is won't be interactable if even one of the fields is invalid  
         isNextDisabled={invalidFields.length > 0}
       />
     </form>
   );
 }
 
+// general function for fields errors validation  
 export function getValidatedErrorIds(
   errors: ValidationError[],
   val: any,

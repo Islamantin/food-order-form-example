@@ -11,6 +11,7 @@ import CountedListPicker, {
 } from "src/components/fields/countedListPicker";
 import utils from "src/utils";
 
+// main data type for form
 interface MealOrder {
   category: "Breakfast" | "Lunch" | "Dinner";
   numberOfPeople: number;
@@ -18,6 +19,7 @@ interface MealOrder {
   dishes: CountedValue[];
 }
 
+// distribution of field ids between form steps
 const steps: Step[] = [
   { title: "Step 1", fields: ["category", "numberOfPeople"] },
   { title: "Step 2", fields: ["restaurant"] },
@@ -28,10 +30,13 @@ const steps: Step[] = [
 export default function Home() {
   const [payload, setPayload] = useState(defaultPayload());
   const [submited, setSubmited] = useState(false);
+  // function for updating fields of form data 
   const updateData = (fieldName: string, value: any) => {
     (payload as any)[fieldName] = value;
     setPayload(payload);
   };
+  // specific form data field if fieldName is passed
+  // otherwise returns whole data object 
   const getCurrentValue = (fieldName?: string) => {
     return fieldName ? (payload as any)[fieldName] : payload;
   };
@@ -45,6 +50,7 @@ export default function Home() {
       <main className="mx-42">
         <div className="shadow-lg w-full p-10 rounded-lg bg-slate-100 max-w-xl">
           <h1 className=" text-3xl mb-8 text-center">Meal Pre-Order</h1>
+          {/* form component injection */}
           {!submited ? (
             <MultistepFormBase
               steps={steps}
@@ -97,6 +103,7 @@ function defaultPayload() {
   return result;
 }
 
+// get restaurants list by category name
 function getRestaurants(category: string) {
   const categoryDishes = data.dishes.filter((x) =>
     x.availableMeals.includes(category.toLowerCase())
@@ -105,12 +112,14 @@ function getRestaurants(category: string) {
   return Array.from(new Set(restaurants));
 }
 
+// dishes list offered by restaurant
 function getDishes(restaurant: string) {
   return data.dishes
     .filter((x) => x.restaurant === restaurant)
     .map((x) => x.name);
 }
 
+// function that retrieves specific field component for form depending on fieldName
 function getFieldComponent(
   fieldName: string,
   validationCallback: (fieldName: string, isValid: boolean) => void,

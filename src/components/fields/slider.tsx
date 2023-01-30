@@ -13,6 +13,7 @@ export interface SliderProps extends InputFieldComponentProps {
   labelText?: string;
 }
 
+// input field that controls integer numbers
 export default function Slider(props: SliderProps) {
   const {
     onValueUpdated,
@@ -28,6 +29,7 @@ export default function Slider(props: SliderProps) {
   );
   const [errorIds, setErrorIds] = useState([] as string[]);
   useEffect(() => {
+    // data will be updated only if there's no errors at the next render after display update
     if (errorIds.length < 1) onValueUpdated(displayValue);
   }, [displayValue]);
   return (
@@ -40,10 +42,12 @@ export default function Slider(props: SliderProps) {
         onChange={(ev) => {
           const val = ev.target.value;
           setDisplayValue(val as any);
+          // collecting validation error ids through general function 
           const ids = validationErrors
             ? getValidatedErrorIds(validationErrors, val, { min, max })
             : [];
           setErrorIds(ids);
+          // passing validation result back to parent component
           if (onValidated) onValidated(ids.length < 1);
         }}
         step="1"
@@ -53,6 +57,7 @@ export default function Slider(props: SliderProps) {
         value={displayValue}
         className="_slider border-b-2"
       />
+      {/* error message output */}
       {validationErrors &&
         validationErrors.map(
           (err, ind) =>

@@ -4,6 +4,7 @@ interface StepsIndicatorProps {
   className?: string;
 }
 
+// form steps display component
 export default function StepsIndicator(props: StepsIndicatorProps) {
   const { stepTitles, currentStepInd, className } = props;
   const styles = className ? className : "";

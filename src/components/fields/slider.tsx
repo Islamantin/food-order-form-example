@@ -58,7 +58,7 @@ export default function Slider(props: SliderProps) {
           (err, ind) =>
             errorIds.includes(err.id) && (
               <p
-                key={"radio-select-err-" + ind}
+                key={"slider-err-" + ind}
                 className="mt-4 text-red-700 text-right"
               >
                 {err.message}

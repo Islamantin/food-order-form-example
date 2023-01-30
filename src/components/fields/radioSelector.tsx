@@ -6,15 +6,10 @@ import {
 } from "../multistepFormBase";
 
 interface RadioSelectorProps extends InputFieldComponentProps {
-  options: RadioSelectorOption[];
+  options: string[];
   validationErrors?: ValidationError[];
   labelText?: string;
   className?: string;
-}
-
-export interface RadioSelectorOption {
-  value: string;
-  label: string;
 }
 
 export default function RadioSelector(props: RadioSelectorProps) {
@@ -37,12 +32,12 @@ export default function RadioSelector(props: RadioSelectorProps) {
     <div className={"mb-4 border-2 p-4 rounded-lg " + styles}>
       {labelText && <p className="w-full mb-3 text-lg">{labelText}</p>}
       <div className="flex justify-between">
-        {options.map((opt, ind) => (
+        {options.map((val, ind) => (
           <div key={"radio-select-opt-" + ind}>
             <input
               type="radio"
-              value={opt.value}
-              checked={displayValue === opt.value}
+              value={val}
+              checked={displayValue === val}
               onChange={(ev) => {
                 const val = ev.target.value;
                 setDisplayValue(val);
@@ -63,7 +58,7 @@ export default function RadioSelector(props: RadioSelectorProps) {
                 "block bg-white cursor-pointer select-none rounded-lg shadow-md w-36 p-4 text-center peer-checked:_selected hover:_highlighted"
               }
             >
-              {opt.label}
+              {val}
             </label>
           </div>
         ))}

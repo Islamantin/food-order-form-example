@@ -41,6 +41,13 @@ export default function StepsControlls(props: StepsControllsProps) {
       ) : (
         <div />
       )}
+      {currentStepInd == maxStepInd && (
+        <input
+          type="submit"
+          value="Submit"
+          className="rounded-lg shadow-md p-4 text-white bg-orange-400 hover:bg-orange-500 cursor-pointer w-36 "
+        />
+      )}
     </div>
   );
 }

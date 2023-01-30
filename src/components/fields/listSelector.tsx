@@ -30,7 +30,7 @@ export default function ListSelector(props: ListSelectorProps) {
       : [];
     setErrorIds(ids);
     if (onValidated) onValidated(ids.length < 1);
-  }
+  };
   useEffect(() => {
     updateDisplayAndValidate(displayValue);
     if (errorIds.length < 1) onValueUpdated(displayValue);
@@ -41,7 +41,11 @@ export default function ListSelector(props: ListSelectorProps) {
         {labelText ? <label>{labelText}</label> : <div />}
         {displayValue ? <label>{displayValue}</label> : <div />}
       </div>
-      <div className=" overflow-y-scroll max-h-60 w-full ">
+      <div
+        className={
+          " max-h-60 w-full " + (list.length > 5 ? "overflow-y-scroll" : "")
+        }
+      >
         <ul>
           {list.map((val, ind) => {
             return (
@@ -79,7 +83,7 @@ export default function ListSelector(props: ListSelectorProps) {
           (err, ind) =>
             errorIds.includes(err.id) && (
               <p
-                key={"radio-select-err-" + ind}
+                key={"list-select-err-" + ind}
                 className="mt-4 text-red-700 text-right"
               >
                 {err.message}

@@ -1,46 +1,39 @@
 import Head from "next/head";
 import { useState } from "react";
 import ListPicker from "src/components/fields/listSelector";
-import RadioSelector, {
-  RadioSelectorOption,
-} from "src/components/fields/radioSelector";
+import RadioSelector from "src/components/fields/radioSelector";
 import Slider from "src/components/fields/slider";
 import MultistepFormBase, { Step } from "src/components/multistepFormBase";
 import data from "../../data/dishes.json";
+import Review from "src/components/fields/review";
+import CountedListPicker, {
+  CountedValue,
+} from "src/components/fields/countedListPicker";
+import utils from "src/utils";
 
 interface MealOrder {
-  category: "breakfast" | "lunch" | "dinner";
+  category: "Breakfast" | "Lunch" | "Dinner";
   numberOfPeople: number;
   restaurant?: string;
-  dishes: {
-    name: string;
-    servings: number;
-  }[];
+  dishes: CountedValue[];
 }
 
 const steps: Step[] = [
   { title: "Step 1", fields: ["category", "numberOfPeople"] },
   { title: "Step 2", fields: ["restaurant"] },
   { title: "Step 3", fields: ["dishes"] },
-  { title: "Review", fields: [] },
-];
-
-const mealCategories: RadioSelectorOption[] = [
-  { label: "Breakfast", value: "breakfast" },
-  { label: "Lunch", value: "lunch" },
-  { label: "Dinner", value: "dinner" },
+  { title: "Review", fields: ["review"] },
 ];
 
 export default function Home() {
   const [payload, setPayload] = useState(defaultPayload());
+  const [submited, setSubmited] = useState(false);
   const updateData = (fieldName: string, value: any) => {
-    console.log(fieldName);
-    console.log(value);
     (payload as any)[fieldName] = value;
     setPayload(payload);
   };
-  const getCurrentValue = (fieldName: string) => {
-    return (payload as any)[fieldName];
+  const getCurrentValue = (fieldName?: string) => {
+    return fieldName ? (payload as any)[fieldName] : payload;
   };
   return (
     <>
@@ -49,34 +42,45 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className="mx-60">
+      <main className="mx-42">
         <div className="shadow-lg w-full p-10 rounded-lg bg-slate-100 max-w-xl">
           <h1 className=" text-3xl mb-8 text-center">Meal Pre-Order</h1>
-          <MultistepFormBase
-            steps={steps}
-            getInputFieldComponent={(fieldName, validationCallback) =>
-              getInputFieldComponent(
-                fieldName,
-                validationCallback,
-                updateData,
-                getCurrentValue
-              )
-            }
-            onStepChanged={(beforeInd, afterInd) => {
-              if (afterInd - beforeInd < 0) {
-                const { fields } = steps[beforeInd];
-                const def = defaultPayload();
-                fields.forEach((f) => {
-                  (payload as any)[f] = (def as any)[f];
-                });
-                setPayload(payload);
+          {!submited ? (
+            <MultistepFormBase
+              steps={steps}
+              getFieldComponent={(fieldName, validationCallback) =>
+                getFieldComponent(
+                  fieldName,
+                  validationCallback,
+                  updateData,
+                  getCurrentValue
+                )
               }
-              console.log(payload);
-            }}
-            onSubmit={() => {
-              console.log(payload);
-            }}
-          />
+              onStepChanged={(beforeInd, afterInd) => {
+                if (afterInd - beforeInd < 0) {
+                  let { fields } = steps[beforeInd];
+                  fields = fields.filter((x) =>
+                    Object.keys(payload).includes(x)
+                  );
+                  const def = defaultPayload();
+                  fields.forEach((k) => {
+                    (payload as any)[k] = (def as any)[k];
+                  });
+                  setPayload(payload);
+                }
+              }}
+              onSubmit={() => {
+                setSubmited(true);
+                console.log(payload);
+              }}
+            />
+          ) : (
+            <div className=" w-full h-40 text-center">
+              <h2 className="text-2xl mb-4">Success!</h2>
+              <img src="./check.svg" alt="success" className="w-20 m-auto" />
+              <p>Thank you for order.</p>
+            </div>
+          )}
         </div>
       </main>
     </>
@@ -85,26 +89,33 @@ export default function Home() {
 
 function defaultPayload() {
   const result: MealOrder = {
-    category: "breakfast",
+    category: "Breakfast",
     numberOfPeople: 0,
+    restaurant: undefined,
     dishes: [],
   };
   return result;
 }
 
-function getRestaurantListByCategory(category: string) {
+function getRestaurants(category: string) {
   const categoryDishes = data.dishes.filter((x) =>
-    x.availableMeals.includes(category)
+    x.availableMeals.includes(category.toLowerCase())
   );
   const restaurants = categoryDishes.map((x) => x.restaurant);
   return Array.from(new Set(restaurants));
 }
 
-function getInputFieldComponent(
+function getDishes(restaurant: string) {
+  return data.dishes
+    .filter((x) => x.restaurant === restaurant)
+    .map((x) => x.name);
+}
+
+function getFieldComponent(
   fieldName: string,
   validationCallback: (fieldName: string, isValid: boolean) => void,
   fieldUpdateCallback: (fieldName: string, value: any) => void,
-  getCurrentValue: (fieldName: string) => any
+  getCurrentValue: (fieldName?: string) => any
 ) {
   switch (fieldName) {
     case "category":
@@ -114,7 +125,7 @@ function getInputFieldComponent(
           onValueUpdated={(val) => fieldUpdateCallback(fieldName, val)}
           onValidated={(isValid) => validationCallback(fieldName, isValid)}
           getValue={() => getCurrentValue(fieldName)}
-          options={mealCategories}
+          options={["Breakfast", "Lunch", "Dinner"]}
           validationErrors={[
             {
               id: "notCorrectString",
@@ -161,13 +172,12 @@ function getInputFieldComponent(
           onValueUpdated={(val) => fieldUpdateCallback(fieldName, val)}
           onValidated={(isValid) => validationCallback(fieldName, isValid)}
           getValue={() => getCurrentValue(fieldName)}
-          list={getRestaurantListByCategory(getCurrentValue("category"))}
+          list={getRestaurants(getCurrentValue("category"))}
           validationErrors={[
             {
               id: "notCorrectString",
               message: "Value is incorrect",
               condition: (val) => {
-                console.log(val);
                 return !val || val.length < 1;
               },
             },
@@ -176,7 +186,59 @@ function getInputFieldComponent(
         />
       );
     case "dishes":
-      return <div key={"field-" + fieldName} />;
+      return (
+        <CountedListPicker
+          key={"field-" + fieldName}
+          list={getDishes(getCurrentValue("restaurant"))}
+          minTotal={getCurrentValue("numberOfPeople")}
+          maxTotal={10}
+          onValueUpdated={(val) => fieldUpdateCallback(fieldName, val)}
+          onValidated={(isValid) => validationCallback(fieldName, isValid)}
+          getValue={() => getCurrentValue(fieldName)}
+          validationErrors={[
+            {
+              id: "countLessThanMinTotal",
+              message: "Total count can't be less than number of people",
+              condition: (items, ep) => utils.totalCount(items) < ep.minTotal,
+            },
+            {
+              id: "countMoreThanMaxTotal",
+              message: "Total count can't be more than 10",
+              condition: (items, ep) => utils.totalCount(items) > ep.maxTotal,
+            },
+          ]}
+          labelText="Dishes order"
+        />
+      );
+    case "review":
+      return (
+        <Review
+          key={"field-" + fieldName}
+          data={getCurrentValue()}
+          labelText={"Review your order"}
+          getFieldTitle={(fName) => {
+            switch (fName) {
+              case "category":
+                return "Meal category";
+              case "numberOfPeople":
+                return "Number of people";
+              case "restaurant":
+                return "Restaurant";
+              case "dishes":
+                return "Dishes";
+            }
+            return "";
+          }}
+          arrayElementPresentation={(item, key) => {
+            return (
+              <div key={key} className="flex justify-between p-2">
+                <p>{item.value}</p>
+                <p>x{item.count}</p>
+              </div>
+            );
+          }}
+        />
+      );
   }
   return <></>;
 }

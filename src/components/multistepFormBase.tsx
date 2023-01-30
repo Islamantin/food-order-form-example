@@ -5,7 +5,7 @@ import utils from "src/utils";
 
 interface MultistepFormBaseProps {
   steps: Step[];
-  getInputFieldComponent: (
+  getFieldComponent: (
     fieldName: string,
     validationCallback: (fieldName: string, isValid: boolean) => void
   ) => JSX.Element;
@@ -16,6 +16,7 @@ interface MultistepFormBaseProps {
 export interface Step {
   title: string;
   fields: string[];
+  extraComponents?: string[];
 }
 
 export interface InputFieldComponentProps {
@@ -31,8 +32,7 @@ export interface ValidationError {
 }
 
 export default function MultistepFormBase(props: MultistepFormBaseProps) {
-  const { steps, getInputFieldComponent, onStepChanged, onSubmit } =
-    props;
+  const { steps, getFieldComponent, onStepChanged, onSubmit } = props;
   const [currentStepInd, setCurrentStepInd] = useState(0);
   const [invalidFields, setInvalidFields] = useState([] as string[]);
   const nextStep = () => {
@@ -42,6 +42,9 @@ export default function MultistepFormBase(props: MultistepFormBaseProps) {
   };
   const prevStep = () => {
     if (currentStepInd - 1 < 0) return;
+    setInvalidFields(
+      invalidFields.filter((x) => !steps[currentStepInd].fields.includes(x))
+    );
     setCurrentStepInd(currentStepInd - 1);
     onStepChanged(currentStepInd, currentStepInd - 1);
   };
@@ -53,14 +56,19 @@ export default function MultistepFormBase(props: MultistepFormBaseProps) {
     }
   };
   return (
-    <form>
+    <form
+      onSubmit={(ev) => {
+        ev.preventDefault();
+        onSubmit();
+      }}
+    >
       <StepsIndicator
         stepTitles={steps.map((x) => x.title)}
         currentStepInd={currentStepInd}
         className="mb-8"
       />
       {steps[currentStepInd].fields.map((val) =>
-        getInputFieldComponent(val, validityChanged)
+        getFieldComponent(val, validityChanged)
       )}
       <StepsControlls
         nextStep={nextStep}
@@ -73,7 +81,11 @@ export default function MultistepFormBase(props: MultistepFormBaseProps) {
   );
 }
 
-export function getValidatedErrorIds(errors: ValidationError[], val: any, extraParams?: any) {
+export function getValidatedErrorIds(
+  errors: ValidationError[],
+  val: any,
+  extraParams?: any
+) {
   let errorIds: string[] = [];
   errors.forEach((err) => {
     if (err.condition(val, extraParams)) {

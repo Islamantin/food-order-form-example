@@ -1,29 +1,16 @@
-# Next.js + Jest
+# Meal Pre-Order Form Example
 
-This example shows how to configure Jest to work with Next.js.
+This example project has been made as an test assignment for [G123](https://github.com/G123-jp/react_assignment).
 
-This includes Next.js' built-in support for Global CSS, CSS Modules and TypeScript.
+It uses React + TypeScript bundle managed by Next.js. Tailwind is applied as CSS framework.
 
-## How to Use
+## How to Run
 
-Quickly get started using [Create Next App](https://github.com/vercel/next.js/tree/canary/packages/create-next-app#readme)!
-
-In your terminal, run the following command:
+In your terminal, run the following commands:
 
 ```bash
-npx create-next-app --example with-jest with-jest-app
+npm install
+npm run dev
 ```
 
-```bash
-yarn create next-app --example with-jest with-jest-app
-```
-
-```bash
-pnpm create next-app --example with-jest with-jest-app
-```
-
-## Run Jest Tests
-
-```bash
-npm test
-```
+Then go to http://localhost:3000 in your browser.

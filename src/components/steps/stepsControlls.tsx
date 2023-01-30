@@ -1,6 +1,6 @@
 import Button from "../button";
 
-interface StepControllsProps {
+interface StepsControllsProps {
   nextStep: () => void;
   prevStep: () => void;
   currentStepInd: number;
@@ -9,7 +9,7 @@ interface StepControllsProps {
   className?: string;
 }
 
-export default function StepControlls(props: StepControllsProps) {
+export default function StepsControlls(props: StepsControllsProps) {
   const {
     nextStep,
     prevStep,
@@ -20,7 +20,7 @@ export default function StepControlls(props: StepControllsProps) {
   } = props;
   const styles = className ? className : "";
   return (
-    <div className={"flex justify-between bottom " + styles}>
+    <div className={"flex justify-between " + styles}>
       {currentStepInd > 0 ? (
         <Button
           label={"Back"}
@@ -40,6 +40,13 @@ export default function StepControlls(props: StepControllsProps) {
         />
       ) : (
         <div />
+      )}
+      {currentStepInd == maxStepInd && (
+        <input
+          type="submit"
+          value="Submit"
+          className="rounded-lg shadow-md p-4 text-white bg-orange-400 hover:bg-orange-500 cursor-pointer w-36 "
+        />
       )}
     </div>
   );

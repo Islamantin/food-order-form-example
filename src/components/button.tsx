@@ -13,7 +13,7 @@ export default function Button(props: ButtonProps) {
       type="button"
       className={"rounded-lg shadow-md p-4 bg-white w-36 " + styles}
       onClick={clickCallBack}
-      disabled={disabled}
+      disabled = {disabled}
     >
       {label}
     </button>

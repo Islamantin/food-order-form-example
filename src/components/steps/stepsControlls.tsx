@@ -9,6 +9,7 @@ interface StepsControllsProps {
   className?: string;
 }
 
+// component that manages buttons for transitioning between steps 
 export default function StepsControlls(props: StepsControllsProps) {
   const {
     nextStep,
@@ -41,6 +42,7 @@ export default function StepsControlls(props: StepsControllsProps) {
       ) : (
         <div />
       )}
+      {/* on the last step renders submit button */}
       {currentStepInd == maxStepInd && (
         <input
           type="submit"

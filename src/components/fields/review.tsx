@@ -1,3 +1,5 @@
+
+// has no input props
 interface ReviewProps {
   data: any;
   getFieldTitle: (fieldName: string) => string;
@@ -5,6 +7,7 @@ interface ReviewProps {
   labelText?: string;
 }
 
+// simple data presentation component
 export default function Review(props: ReviewProps) {
   const { data, getFieldTitle, arrayElementPresentation, labelText } = props;
   return (

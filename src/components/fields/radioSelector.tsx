@@ -12,6 +12,7 @@ interface RadioSelectorProps extends InputFieldComponentProps {
   className?: string;
 }
 
+// input component for radio-like selection
 export default function RadioSelector(props: RadioSelectorProps) {
   const {
     onValueUpdated,
@@ -41,16 +42,19 @@ export default function RadioSelector(props: RadioSelectorProps) {
               onChange={(ev) => {
                 const val = ev.target.value;
                 setDisplayValue(val);
+                // collecting validation error ids through general function
                 const ids = validationErrors
                   ? getValidatedErrorIds(validationErrors, val)
                   : [];
                 setErrorIds(ids);
+                // passing validation result back to parent component
                 if (onValidated) onValidated(ids.length < 1);
               }}
               className="hidden peer"
             />
             <label
               onClick={(ev: any) => {
+                // passing input to radio-button
                 const input: HTMLInputElement = ev.target.previousSibling;
                 input.click();
               }}
@@ -63,6 +67,7 @@ export default function RadioSelector(props: RadioSelectorProps) {
           </div>
         ))}
       </div>
+      {/* error message output */}
       {validationErrors &&
         validationErrors.map(
           (err, ind) =>

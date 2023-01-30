@@ -11,6 +11,7 @@ interface ListSelectorProps extends InputFieldComponentProps {
   labelText?: string;
 }
 
+// input field component to select value from list
 export default function ListSelector(props: ListSelectorProps) {
   const {
     onValueUpdated,
@@ -22,13 +23,16 @@ export default function ListSelector(props: ListSelectorProps) {
   } = props;
   const [displayValue, setDisplayValue] = useState(getValue());
   const [errorIds, setErrorIds] = useState([] as string[]);
+  // error message would be shown only after user will do the first input
   const [isTouched, setIsToched] = useState(false);
   const updateDisplayAndValidate = (val: any) => {
     setDisplayValue(val);
+    // collecting validation error ids through general function
     const ids = validationErrors
       ? getValidatedErrorIds(validationErrors, val)
       : [];
     setErrorIds(ids);
+    // passing validation result back to parent component
     if (onValidated) onValidated(ids.length < 1);
   };
   useEffect(() => {

@@ -24,6 +24,7 @@ export interface CountedValue {
   count: number;
 }
 
+// input field component that provides picking of multiple items from array in a defined quantity
 export default function CountedListPicker(props: ListSelectorProps) {
   const {
     onValueUpdated,
@@ -37,10 +38,12 @@ export default function CountedListPicker(props: ListSelectorProps) {
   } = props;
   const initialValue: CountedValue[] = getValue();
   const [pick, setPick] = useState({
+    // initial list to pick from is populated with values that are not already in a final list
     fromList: list.filter((x) => !initialValue.some((y) => y.value === x)),
     toList: initialValue,
   } as StateOfPick);
   const count = utils.totalCount(initialValue);
+  // error messages will be shown only after minimal total amount of items being picked for the first time
   const [isTouched, setIsToched] = useState(count > minTotal);
   const [totalCount, setTotalCount] = useState(count);
   const getErrorIds = (val: any) => {
@@ -52,7 +55,7 @@ export default function CountedListPicker(props: ListSelectorProps) {
       : [];
   };
   const [errorIds, setErrorIds] = useState(getErrorIds(initialValue));
-  
+
   useEffect(() => {
     if (totalCount >= minTotal) setIsToched(true);
 
@@ -69,6 +72,7 @@ export default function CountedListPicker(props: ListSelectorProps) {
     <div className="mb-4 border-2 p-4 rounded-lg ">
       <div className="flex justify-between mb-3 text-lg">
         {labelText ? <label>{labelText}</label> : <div />}
+        {/* addditional informational messages */}
         {totalCount == maxTotal ? (
           <label>You can only add up to {maxTotal} items</label>
         ) : totalCount < minTotal ? (
@@ -92,6 +96,7 @@ export default function CountedListPicker(props: ListSelectorProps) {
                     disabled={totalCount >= maxTotal}
                     onClick={(ev: any) => {
                       if (totalCount >= maxTotal) return;
+                      // selecting an element from the first list and placing it in the second one in the amount of 1
                       const val = ev.target.value;
                       const newFromList = pick.fromList.filter((x) => x != val);
                       const newToList = [
@@ -103,7 +108,6 @@ export default function CountedListPicker(props: ListSelectorProps) {
                         toList: newToList,
                       };
                       setPick(newPick);
-                    //   validate(pick.toList);
                       setTotalCount(totalCount + 1);
                     }}
                     value={val}
@@ -147,6 +151,7 @@ export default function CountedListPicker(props: ListSelectorProps) {
                     className=" bg-slate-300 text-white rounded-2xl p-1 w-6 h-6 hover:bg-orange-400"
                     onClick={() => {
                       let newPick = pick;
+                      // decrease amount of item by 1 in a final list
                       if (item.count >= 2) {
                         const newToList = [...pick.toList];
                         newToList[ind] = {
@@ -158,6 +163,7 @@ export default function CountedListPicker(props: ListSelectorProps) {
                           toList: newToList,
                         };
                       } else {
+                        // if the count is only 1, then item returns to original list
                         const newToList = [...pick.toList].filter(
                           (x) => x.value !== item.value
                         );
@@ -168,7 +174,6 @@ export default function CountedListPicker(props: ListSelectorProps) {
                         };
                       }
                       setPick(newPick);
-                    //   validate(pick.toList);
                       setTotalCount(totalCount - 1);
                     }}
                   >
@@ -185,6 +190,7 @@ export default function CountedListPicker(props: ListSelectorProps) {
                       className=" bg-slate-300 text-white rounded-2xl p-1 w-6 h-6 hover:_selected"
                       onClick={() => {
                         if (totalCount >= maxTotal) return;
+                        // add to quantity of item by 1
                         const newToList = [...pick.toList];
                         newToList[ind] = {
                           value: item.value,
@@ -195,7 +201,6 @@ export default function CountedListPicker(props: ListSelectorProps) {
                           toList: newToList,
                         };
                         setPick(newPick);
-                        // validate(pick.toList);
                         setTotalCount(totalCount + 1);
                       }}
                     >

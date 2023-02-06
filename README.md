@@ -1,6 +1,6 @@
 # Meal Pre-Order Form Example
 
-This example project has been made as an test assignment for [G123](https://github.com/G123-jp/react_assignment).
+This example project has been made as a frontend test assignment for [G123](https://github.com/G123-jp/react_assignment).
 
 It uses React + TypeScript bundle managed by Next.js. Tailwind is applied as CSS framework.
 

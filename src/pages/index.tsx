@@ -30,13 +30,13 @@ const steps: Step[] = [
 export default function Home() {
   const [payload, setPayload] = useState(defaultPayload());
   const [submited, setSubmited] = useState(false);
-  // function for updating fields of form data 
+  // function for updating fields of form data
   const updateData = (fieldName: string, value: any) => {
     (payload as any)[fieldName] = value;
     setPayload(payload);
   };
   // specific form data field if fieldName is passed
-  // otherwise returns whole data object 
+  // otherwise returns whole data object
   const getCurrentValue = (fieldName?: string) => {
     return fieldName ? (payload as any)[fieldName] : payload;
   };
@@ -81,10 +81,12 @@ export default function Home() {
               }}
             />
           ) : (
-            <div className=" w-full h-40 text-center">
-              <h2 className="text-2xl mb-4">Success!</h2>
-              <img src="./check.svg" alt="success" className="w-20 m-auto" />
-              <p>Thank you for order.</p>
+            <div className=" w-full text-center">
+              <h2 className="text-3xl mb-4">Success!</h2>
+              <div className="_selected rounded-full w-fit m-auto mb-4 p-2 shadow-lg">
+                <img src="./check.svg" alt="success" className="w-20 to-white" style={{filter: "invert(1)"}} />
+              </div>
+              <p className=" text-xl">Thank you for order.</p>
             </div>
           )}
         </div>
